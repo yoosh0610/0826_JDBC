@@ -1,0 +1,88 @@
+package com.aclass.test.run;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class TestRun {
+
+	public static void main(String[] args) {
+		//JDBC 맛보기(자바측에서 DBMS를 사용할수 있게 만들어주는 것)
+		/*
+		 * 1. 디비버 실행(클라이언트 프로그램 실행)
+		 * 
+		 * 2. 접속하기 누름
+		 * 
+		 * 3. DBMS 선택
+		 * 
+		 * 4. IP주소, PORT번호, 사용자계정, 비밀번호
+		 * 
+		 * 5. ojdbc.jar --> 등록
+		 * 
+		 * 6. 새 SQL편집기
+		 * 
+		 * 7. INSERT문작성 ==> INSERT INTO 테이블명 VALUES('값', '값' , '값');
+		 * 
+		 * 8. SQL문을 실행
+		 * 
+		 * 9. UpdatedRows : 1
+		 * 
+		 * 10. COMMIT;
+		 * 
+		 */
+		//방법은 계속 바뀌지만 순서(절차)는 바뀌지 않음
+		//DB로 데이터 출력
+		// 0 필요한 변수 세팅
+		Connection conn = null;
+		//2~4까지 실행
+		Statement stmt = null;
+		//6~8번까지 실행
+		int result = 0;
+		
+		// 사용자에게 값을 입력받아서 DBMS로 전달 => 테이블에 INSERT
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.print("번호를 입력해주세요 > ");
+		int num = sc.nextInt();
+		sc.nextLine();
+		System.out.print("이름를 입력해주세요 > ");
+		String name = sc.nextLine();
+		
+		// 실행할 SQL문(완성된 형태로 만들어주기)
+		String sql = "INSERT INTO TB_STUDENT VALUES (1, '홍길동' , SYSDATE)";
+		sql = "INSERT INTO TB_STUDENT VALUES(" + num + ", " + name + ", SYSDATE)";  
+		// 준비하기 단계
+		
+		try {
+			// 1) JDBC Driver 등록 -> ojdbc.jar
+			// Driver등록은 프로그램 실행 시 딱 1회만 하면 됨
+			Class.forName("oracle.jdbc.driver.OracleDriver");// 등록하는 과정
+			System.out.print("Driver등록 성공!");
+			
+			// 2) DB서버와의 연결(IP주소, PORT번호, 사용자계정, 비밀번호)
+			DriverManager.getConnection("jdbc:oracle:thin:@115.90.212.90:10000:XE", 
+					                    "YSH16", "YSH161234");
+			//사용자이름은 소문자로 적어도 대문자로 변환 비밀번호는 소문자도 허용(대소문자 구분 잘해야함)
+			//각 DBMS에 따라, 버전에 따라 다름
+			System.out.print("DB서버 접속 성공!");
+			
+			
+		}catch(ClassNotFoundException e) {
+			e.printStackTrace();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		// 많은 DBMS들을 호환할수 있게 규칙(통일성,interface)을 만들어 줌 
+		// 자바는 자료파일(클레스파일)로 만들면 압축파일
+		// ojdbc는 기능을 구현하는 파일의 모음집 => OracleDriver를 사용
+		// 프로잭트의 설정 (집에서도 작업)
+		// 3,5번까지 실행
+		
+		
+		
+		
+	}
+
+}

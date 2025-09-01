@@ -1,0 +1,37 @@
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+public class EmployeeSelect {
+
+	public static void main(String[] args) {
+		
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rset = null;
+		
+		String insert = """
+				SELECT
+					   STUDENT_ID
+					 , STUDENT_NAME
+					 , ENROLL_DATE
+				  FROM
+				       TB_STUDENT
+				  ORDER 
+					 BY 
+		  			   ENROLL_DATE DESC
+			 """;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	}
+
+}

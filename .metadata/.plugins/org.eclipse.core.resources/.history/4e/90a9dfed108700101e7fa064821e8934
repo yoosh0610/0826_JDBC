@@ -1,0 +1,20 @@
+package controller;
+
+import model.dao.ZooDao;
+import model.vo.Zoo;
+
+public class ZooController {
+	
+	public int save(String animalName, String animalType, String zone, String prey, String gender) {
+	
+		Zoo zoo	= new Zoo(animalName, animalType, zone, prey, gender);
+	
+		int result = new ZooDao().save(zoo);
+			
+	}
+	
+	
+	
+	
+	
+}

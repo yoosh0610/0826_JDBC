@@ -1,0 +1,147 @@
+package com.aclass.test.run;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class SelectRun {
+
+	public static void main(String[] args) {
+		// 현재 작업중인 DB서버에서 각자 자신이 가지고 있는 TB_STUDENT테이블의 모든 행 조회 Console에 출력
+		// SELECT문
+		// ResultSet(조회된 행들의 집합)
+		// => ResultSet타입의 데이터를 받아서 뽑기
+		
+		// 0) 필요한 변수들 먼저 세팅
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rset = null;
+		// 0단계 끝!
+		
+		// 요청할 SQL문도 미리 완성형태로 준비해두기
+		/*
+		String sql = "SELECT"
+						  + "STUDENT_ID"
+						+ ", STUDENT_NAME"
+						+ ", ENROLL_DATE"
+				     + "FROM"
+					      + "TB_STUDENT"
+				    + "ORDER" 
+					   + "BY" 
+					      + "ENROLL_DATE DESC";*/
+		// 이쁘게 하는법
+		// 1) 파일로 빼서 텍스트로 작업
+		// 2) 텍스트블록
+		String sql = """
+						SELECT
+							   STUDENT_ID
+							 , STUDENT_NAME
+							 , ENROLL_DATE
+						  FROM
+						       TB_STUDENT
+						  ORDER 
+							 BY 
+				  			   ENROLL_DATE DESC
+					 """;
+		
+		try {
+		// 1. JDBC Driver등록
+		// 리플렉션(Reflaction)을 이용한 드라이버 클래스 로딩
+		// => 인자값에 따라 타입이 달라지기 때문에 실행할때 선택할수 있음
+		// 오라클로 코드를 적으면 나중에 DB를 다르게 하면 일일히 다 고쳐야 함
+		// 실행시점에 필요한 데이터베이스 드라이버를 동적으로 로드
+		// 코드의 변경없이 데이터베이스를 연결할 수 있도록
+		Class.forName("oracle.jdbc.driver.OracleDriver");
+		
+		// 2. Connection 객체 생성
+		//계정의 정보를 입력해야함
+		conn = DriverManager.getConnection("jdbc:oracle:thin:@115.90.212.20:10000:XE"
+										  , "YSH16", "YSH161234");
+		
+		System.out.println("DB서버 접속 성공!");
+		
+		// 3. Statement 객체 생성
+		stmt = conn.createStatement();
+		
+		// 4. SQL문을 실행 후 결과 받기
+		// 실행할 SQL문이 SELECT문인 경우
+		// stmt.executeQuery(sql) : ResultSet
+		rset =  stmt.executeQuery(sql);
+		// System.out.println(rset); 주소값
+		// 각 쎌에 담긴 값을 받아야함 
+		// 행단위로 접근
+		
+		/*
+		// ResultSet 반환됨
+		// 커서를 조작
+		rset.next(); // 행을 내림
+		int studentId = rset.getInt("STUDENT_ID");
+		// get다음에 자료형
+		String studentName = rset.getString("STUDENT_NAME");
+		Date enrollDate = rset.getDate("ENROLL_DATE");
+		//To_CHAR형으로 한다면 자바에서 String으로 받을수도 있음
+		System.out.println("번호 : " + studentId + ", 이름 : " + studentName + ", 등록일 : " + enrollDate);
+		
+		rset.next();
+		studentId = rset.getInt("STUDENT_ID");
+		studentName = rset.getString("STUDENT_NAME");
+		enrollDate = rset.getDate("ENROLL_DATE");
+		System.out.println("번호 : " + studentId + ", 이름 : " + studentName + ", 등록일 : " + enrollDate);
+		
+		rset.next();
+		studentId = rset.getInt("STUDENT_ID");
+		studentName = rset.getString("STUDENT_NAME");
+		enrollDate = rset.getDate("ENROLL_DATE");
+		System.out.println("번호 : " + studentId + ", 이름 : " + studentName + ", 등록일 : " + enrollDate);
+		
+		rset.next();
+		studentId = rset.getInt("STUDENT_ID");
+		studentName = rset.getString("STUDENT_NAME");
+		enrollDate = rset.getDate("ENROLL_DATE");
+		System.out.println("번호 : " + studentId + ", 이름 : " + studentName + ", 등록일 : " + enrollDate);
+		// 행이 없을수도 있음, 에러 뜸 => 반복문()
+		*/
+		while(rset.next()){ // 반환타입 boolean
+			// 커서를 조작했을 때 행이 존재한다면 true / 행ㅇ이 존재하지 않는다 false
+			int studentId = rset.getInt("STUDENT_ID");
+			String studentName = rset.getString("STUDENT_NAME");
+			Date enrollDate = rset.getDate("ENROLL_DATE");
+			System.out.println("번호 : " + studentId + ", 이름 : " + studentName + ", 등록일 : " + enrollDate);
+		}
+		
+		
+		} catch(ClassNotFoundException e) {
+			System.out.println("ojdbc추가했나요?");
+			System.out.println("oracle.jdbc.driver.OracleDriver오타없나요?");
+		} catch(SQLException e) {
+			System.out.println("jdbc:oracle:thin:@115.90.212.20:10000:XE 오타없나요?");
+			System.out.println("사용자 계정명 / 비밀번호가 올바른가요?");
+			System.out.println("SQL문 잘 작성했나요?");
+		} finally {
+			try {
+				//코드가 잘못되면 여기서 예외가 발생
+				if(rset != null && !rset.isClosed()) {
+					rset.close();// rset는 널값, 닫혀있는지 확인 => 조건문
+				}
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				if(stmt != null && !stmt.isClosed()) 
+					stmt.close();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null && !conn.isClosed()) 
+					conn.close();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+}

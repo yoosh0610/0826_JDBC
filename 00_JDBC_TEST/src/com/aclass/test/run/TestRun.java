@@ -1,0 +1,116 @@
+package com.aclass.test.run;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class TestRun { //DAO에 해당(실제로는 이렇지 않음 - 수업이라 풀어서 썼음) - 동작원리 이해
+
+	public static void main(String[] args) {
+		//JDBC 맛보기(자바측에서 DBMS를 사용할수 있게 만들어주는 것)
+		/*
+		 * 1. 디비버 실행(클라이언트 프로그램 실행)
+		 * 
+		 * 2. 접속하기 누름
+		 * 
+		 * 3. DBMS 선택
+		 * 
+		 * 4. ojdbc.jar --> 등록
+		 * 
+		 * 5. IP주소, PORT번호, 사용자계정, 비밀번호
+		 * 
+		 * 6. 새 SQL편집기
+		 * 
+		 * 7. INSERT문작성 ==> INSERT INTO 테이블명 VALUES('값', '값' , '값');
+		 * 
+		 * 8. SQL문을 실행
+		 * 
+		 * 9. UpdatedRows : 1
+		 * 
+		 * 10. COMMIT;(자동으로 오토커밋)
+		 * 
+		 */
+		//방법은 계속 바뀌지만 순서(절차)는 바뀌지 않음
+		//DB로 데이터 출력
+		// 0 필요한 변수 세팅
+		Connection conn = null; // <- 새 SQL편집기
+		Statement stmt = null;
+		int result = 0;
+		
+		// 사용자에게 값을 입력받아서 DBMS로 전달 => 테이블에 INSERT
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.print("번호를 입력해주세요 > ");
+		int num = sc.nextInt();
+		sc.nextLine();
+		System.out.print("이름를 입력해주세요 > ");
+		String name = sc.nextLine();
+		
+		// 실행할 SQL문(완성된 형태로 만들어주기) // 7번 작성
+		String sql = "INSERT INTO TB_STUDENT VALUES (1, '홍길동' , SYSDATE)";
+		sql = "INSERT INTO TB_STUDENT VALUES(" + num + ", '" + name + "', SYSDATE)";  
+		// 준비하기 단계
+		
+		try { //2~4까지 실행
+			// 1) JDBC Driver 등록 -> ORACLE -> ojdbc.jar
+			// Driver등록은 프로그램 실행 시 딱 1회만 하면 됨
+			Class.forName("oracle.jdbc.driver.OracleDriver");// 등록하는 과정
+			System.out.println("Driver등록 성공!");
+			
+			// 2) DB서버와의 연결(IP주소, PORT번호, 사용자계정, 비밀번호)
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@115.90.212.20:10000:XE", 
+					        /*Connection해줌*/  "YSH16", "YSH161234"); // 5번 연결
+			//사용자이름은 소문자로 적어도 대문자로 변환, 비밀번호는 소문자도 허용(대소문자 구분 잘해야함)
+			//각 DBMS에 따라, 버전에 따라 다름
+			System.out.println("DB서버 접속 성공!");
+			
+			conn.setAutoCommit(false);//오토커밋 안할래
+			
+			// 3) 새 SQL편집기 열기 //6번 실행
+			stmt = conn.createStatement();
+			System.out.println("Statement 객체 생성!");
+			
+			// 4) SQL문을 실행 
+			// UpdatedRows : N(성공)
+			// UpdatedRows : N(성공)
+			// UpdatedRows : N(삭제)
+			// DML(INSERT, UPDATE, DELETE) => 처리된 행의 수
+			// executeUpdate(DML문) : int
+			
+			//stmt.executeUpdate("실행하고자 하는 SQL문");
+			result = stmt.executeUpdate(sql); // 8번 실행
+			System.out.println("SQL문 실행 성공!");
+			//확인은 DB에서 확인
+			
+			// 5) 트랜잭션처리
+			if(result > 0) { //  INSERT에 성공했을 경우
+				conn.commit();
+			}
+			
+		}catch(ClassNotFoundException e) {
+			e.printStackTrace();
+			System.out.println("무조건 64행이 문제");
+		}catch(SQLException e) {
+			e.printStackTrace();
+			System.out.println("사용자이름/ 비밀번호가 부적합 -> 64행 문제");
+			System.out.println("부적합한 oracle URL -> 63행 문제");
+			System.out.println("SQLSyntaxErrorException-> SQL문 확인하기");
+			System.out.println("NullPointerException -> JDBC객체들 확인하기");
+		} finally {
+			try {
+				stmt.close();
+				conn.close();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		// 많은 DBMS들을 호환할수 있게 규칙(통일성,interface)을 만들어 줌 
+		// 자바는 자료파일(클레스파일)로 만들면 압축파일
+		// ojdbc는 기능을 구현하는 파일의 모음집 => OracleDriver를 사용
+		// 프로잭트의 설정 (집에서도 작업)
+		// 3,4번까지 실행
+	}
+
+}
