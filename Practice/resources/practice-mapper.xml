@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>MEMBER SQL</comment>
+<entry key="A">
+	B
+</entry>
+
+<entry key="findAll">
+	SELECT  
+	   EMP_ID
+	 , EMP_NAME
+	 , DEPT_TITLE
+	 , JOB_NAME
+	 , SALARY
+  FROM 
+  	   EMPLOYEE
+  JOIN 
+       JOB USING (JOB_CODE)
+  JOIN 
+  	   DEPARTMENT  ON (DEPT_CODE = DEPT_ID)
+ ORDER 
+	BY 
+	   EMP_ID DESC
+</entry>
+
+<entry key="findDept">
+SELECT  
+	   EMP_ID
+	 , EMP_NAME
+	 , DEPT_TITLE
+	 , JOB_NAME
+	 , SALARY
+  FROM 
+  	   EMPLOYEE
+  JOIN 
+       JOB USING (JOB_CODE)
+  JOIN 
+  	   DEPARTMENT  ON (DEPT_CODE = DEPT_ID)
+ WHERE	   
+	   DEPT_TITLE = ?
+ ORDER 
+	BY 
+	   EMP_ID DESC
+</entry>
+
+
+
+
+
+
+</properties>

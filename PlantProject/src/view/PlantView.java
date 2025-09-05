@@ -30,7 +30,7 @@ public class PlantView {
 			case 1 : save(); break; 
 			case 2 : plantAll(); break;
 			case 3 : findByName(); break; 
-			case 4 : indByKeyword(); break; 
+			case 4 : findByKeyword(); break; 
 			case 5 : break; 
 			case 6 : break; 
 			case 9 : System.out.println("프로그램을 종료합니다."); return; 
@@ -59,7 +59,7 @@ public class PlantView {
 	
 	private void plantAll() {
 		System.out.println("\n식물 전체 조회");
-		List<Plant> plant = pc.plantAll();
+		List<Plant> plants = pc.plantAll();
 		
 		System.out.println("\n조회된 총 식물수는 " + plants.size() + "개 입니다.");
 		if(plants.isEmpty()) {
